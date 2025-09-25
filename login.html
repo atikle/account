@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    
+    <title>atikle Single Sign-On</title>
+    <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
+
+    <style>
+        /* CSS variables as requested */
+        :root {
+            --transition-speed-fast: 0.2s;
+            --transition-speed-normal: 0.3s;
+            --transition-speed-slow: 0.4s;
+            --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+            --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            
+            --navbar-background-1: white;
+            --background-1: white;
+            --background-2: #f0f2f5;
+            --background-3: black;
+            --background-4: #f0f2f5;
+            --background-5: #eaebf5;
+            --card-background-1: white;
+            --card-background-2: whitesmoke;
+            --text-color-1: #050505;
+            --text-color-2: #65676b;
+            --text-color-3: white;
+            --shadow-1: 0 2px 6px 0 rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
+            --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+            --button-background-1: #1877f2;
+            --button-background-2: #e4e6eb;
+            --button-background-3: #3d42df;
+            --button-text-1: #ffffff;
+            --button-text-2: #050505;
+            --button-text-3: #ffffff;
+            --hover-overlay: rgba(0, 0, 0, 0.05);
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 80px;
+        }
+
+        body.dark-mode {
+            --navbar-background-1: #18191a;
+            --background-1: black;
+            --background-2: #18191a;
+            --background-3: white;
+            --background-4: #242526;
+            --background-5: #18191a;
+            --card-background-1: #242526;
+            --card-background-2: #242526;
+            --text-color-1: white;
+            --text-color-2: #b0b3b8;
+            --text-color-3: black;
+            --shadow-1: 0px 0px 8px 0px #111;
+            --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+            --button-background-1: #2d88ff;
+            --button-background-2: #3a3b3c;
+            --button-background-3: #6f74ff;
+            --button-text-1: #ffffff;
+            --button-text-2: #e4e6eb;
+            --button-text-3: #ffffff;
+            --hover-overlay: rgba(255, 255, 255, 0.08);
+        }
+
+        /* General Reset & Body styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-2);
+            color: var(--text-color-1);
+            transition: background-color var(--transition-speed-normal) ease, color var(--transition-speed-normal) ease;
+            overflow-x: hidden;
+        }
+
+        /* Login Page styles */
+        .login-page {
+            /* display: flex;
+            justify-content: center;
+            align-items: center; */
+            min-height: 100vh;
+            /* background-color: var(--background-4); */
+            background-image: url(https://atikle.github.io/resource/admin-login-bg.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            user-select: none;
+        }
+
+        /* .login-card {
+            background-color: var(--card-background-1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        } */
+        .login-card {
+            background-color: var(--card-background-1);
+            padding: 60px;
+            border-radius: 0px;
+            box-shadow: var(--shadow-1);
+            float: inline-end;
+            width: 25%;
+            height: 100vh;
+            min-width: 400px;
+            max-width: 500px;
+            text-align: center;
+            align-content: center;
+        }
+
+        @media screen and (max-width: 600px) {
+            .login-page {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background-color: white;
+                background-image: none;
+            }
+
+            .login-card {
+                background-color: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: none;
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+            }
+
+            .login-logo {
+                width: 120px;
+                margin-bottom: 80px;
+            }
+        }
+        
+        .login-logo {
+            width: 150px;
+            /* margin-bottom: 24px; */
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+
+        .login-card h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--text-color-1);
+        }
+
+        .login-card p {
+            font-size: 14px;
+            color: var(--text-color-2);
+            margin-bottom: 24px;
+        }
+
+        .login-form .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .login-form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-color-2);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--button-background-2);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--background-2);
+            color: var(--text-color-1);
+            transition: border-color var(--transition-speed-normal), box-shadow var(--transition-speed-normal);
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--button-background-1);
+            box-shadow: 0 0 0 3px var(--hover-overlay);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--button-background-1);
+            color: var(--button-text-1);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color var(--transition-speed-normal) ease, transform var(--transition-speed-fast) ease;
+        }
+
+        .login-button:hover {
+            opacity: 0.9;
+        }
+        
+        .login-button:active {
+            transform: scale(0.98);
+        }
+
+        #error-message {
+            color: #ff3b30;
+            margin-top: 16px;
+            font-size: 14px;
+            height: 20px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity var(--transition-speed-normal);
+        }
+        
+        #error-message.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-page" class="login-page" oncontextmenu="return false;">
+        <div class="login-card">
+            <a href="https://atikle.github.io/home">
+                <img src="https://atikle.github.io/resource/atikle-logo_multicolor.png" alt="atikle Logo" class="login-logo">
+            </a>
+            <!-- <h1>Admin Console</h1> -->
+            <!-- <p>Please sign in to continue</p> -->
+            <form id="login-form" class="login-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="admin" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="password" required>
+                </div>
+                <button type="submit" class="login-button">Sign In</button>
+            </form>
+            <div id="error-message">Invalid username or password.</div>
+        </div>
+        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; ">atikle Single Sign-On v1.1</p>
+    </div>
+</body>
+</html>
+
