@@ -10,6 +10,7 @@
     
     <title>atikle Single Sign-On</title>
     <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
+    <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
 
     <style>
         /* CSS variables as requested */
@@ -79,44 +80,33 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--background-2);
+            background-color: var(--background-1);
             color: var(--text-color-1);
             transition: background-color var(--transition-speed-normal) ease, color var(--transition-speed-normal) ease;
             overflow-x: hidden;
         }
 
-        /* Login Page styles */
         .login-page {
             /* display: flex;
             justify-content: center;
             align-items: center; */
             min-height: 100vh;
-            /* background-color: var(--background-4); */
-            background-image: url(https://atikle.github.io/resource/admin-login-bg.png);
+            background-image: url(https://atikle.github.io/resource/backgrounds/2.jpg);
             background-repeat: no-repeat;
             background-size: cover;
             user-select: none;
         }
 
-        /* .login-card {
-            background-color: var(--card-background-1);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        } */
         .login-card {
             background-color: var(--card-background-1);
             padding: 60px;
             border-radius: 0px;
             box-shadow: var(--shadow-1);
             float: inline-end;
-            width: 25%;
+            width: 23%;
             height: 100vh;
             min-width: 400px;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
             align-content: center;
         }
@@ -150,8 +140,7 @@
         .login-logo {
             width: 150px;
             /* margin-bottom: 24px; */
-            margin-top: 30px;
-            margin-bottom: 60px;
+            margin-bottom: 120px;
         }
 
         .login-card h1 {
@@ -181,39 +170,58 @@
 
         .login-form input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 18px;
             border: 1px solid var(--button-background-2);
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: var(--background-2);
+            border-radius: 30px;
             color: var(--text-color-1);
+            font-size: 18px;
+            font-weight: 500;
+            background-color: var(--background-2);
             transition: border-color var(--transition-speed-normal), box-shadow var(--transition-speed-normal);
+
+            margin-bottom: 5px;
         }
 
         .login-form input:focus {
             outline: none;
-            border-color: var(--button-background-1);
-            box-shadow: 0 0 0 3px var(--hover-overlay);
+            box-shadow: var(--shadow-2);
+            background-color: var(--background-1);
         }
 
-        .login-button {
-            width: 100%;
+        .form-action-button {
             padding: 14px;
-            background-color: var(--button-background-1);
-            color: var(--button-text-1);
             border: none;
-            border-radius: 8px;
+            border-radius: 40px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color var(--transition-speed-normal) ease, transform var(--transition-speed-fast) ease;
+
+            margin-top: 30px;
         }
 
-        .login-button:hover {
+        .login {
+            background-color: var(--button-background-1);
+            color: var(--button-text-1);
+            width: 100%;
+        }
+
+        .continue-google {
+            width: auto;
+            padding-left: 45px;
+            background-color: var(--background-3);
+            color: var(--button-text-1);
+            background-image: url(https://atikle.github.io/resource/placeholders/google-icon.png);
+            background-position: 8px 8px;
+            background-size: 30px;
+            background-repeat: no-repeat;
+        }
+
+        .form-action-button:hover {
             opacity: 0.9;
         }
         
-        .login-button:active {
+        .form-action-button:active {
             transform: scale(0.98);
         }
 
@@ -243,14 +251,18 @@
             <!-- <p>Please sign in to continue</p> -->
             <form id="login-form" class="login-form">
                 <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" value="admin" required>
+                    <!-- <label for="username">Username</label> -->
+                    <input type="text" id="username" name="username" placeholder="Email" required>
                 </div>
                 <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" value="password" required>
+                    <!-- <label for="password">Password</label> -->
+                    <input type="password" id="password" name="password" placeholder="Password" required>
                 </div>
-                <button type="submit" class="login-button">Sign In</button>
+                <button type="submit" class="form-action-button login">Sign In</button>
+
+                <p>OR</p>
+
+                <button type="submit" class="form-action-button continue-google">Sign In with Google</button>
             </form>
             <div id="error-message">Invalid username or password.</div>
         </div>
@@ -258,4 +270,3 @@
     </div>
 </body>
 </html>
-
