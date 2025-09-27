@@ -113,9 +113,6 @@
 
         @media screen and (max-width: 600px) {
             .login-page {
-                display: flex;
-                justify-content: center;
-                align-items: center;
                 min-height: 100vh;
                 width: auto;
                 background-color: var(--background-1);
@@ -123,6 +120,10 @@
             }
 
             .login-card {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 background-color: var(--background-1);
                 padding: 30px;
                 border-radius: 12px;
