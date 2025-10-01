@@ -12,68 +12,40 @@
     
     <title>atikle Single Sign-On</title>
     <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
-    <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
 
     <style>
-        /* CSS variables as requested */
         :root {
             --transition-speed-fast: 0.2s;
             --transition-speed-normal: 0.3s;
-            --transition-speed-slow: 0.4s;
-            --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
-            --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             
-            --navbar-background-1: white;
             --background-1: white;
             --background-2: #f0f2f5;
-            --background-3: black;
-            --background-4: #f0f2f5;
-            --background-5: #eaebf5;
             --card-background-1: white;
-            --card-background-2: whitesmoke;
             --text-color-1: #050505;
             --text-color-2: #65676b;
-            --text-color-3: white;
-            --shadow-1: 0 2px 6px 0 rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
+            --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.08);
             --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.1);
 
             --button-background-1: #1877f2;
             --button-background-2: #e4e6eb;
-            --button-background-3: #3d42df;
             --button-text-1: #ffffff;
             --button-text-2: #050505;
-            --button-text-3: #ffffff;
-            --hover-overlay: rgba(0, 0, 0, 0.05);
-
-            --sidebar-width: 260px;
-            --sidebar-width-collapsed: 80px;
         }
 
         body.dark-mode {
-            --navbar-background-1: #18191a;
-            --background-1: black;
-            --background-2: #18191a;
-            --background-3: white;
-            --background-4: #242526;
-            --background-5: #18191a;
+            --background-1: #18191a;
+            --background-2: #3a3b3c;
             --card-background-1: #242526;
-            --card-background-2: #242526;
-            --text-color-1: white;
+            --text-color-1: #e4e6eb;
             --text-color-2: #b0b3b8;
-            --text-color-3: black;
-            --shadow-1: 0px 0px 8px 0px #111;
+            --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.3);
             --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.25);
 
             --button-background-1: #2d88ff;
-            --button-background-2: #3a3b3c;
-            --button-background-3: #6f74ff;
-            --button-text-1: #ffffff;
+            --button-background-2: #4e4f50;
             --button-text-2: #e4e6eb;
-            --button-text-3: #ffffff;
-            --hover-overlay: rgba(255, 255, 255, 0.08);
         }
 
-        /* General Reset & Body styles */
         * {
             margin: 0;
             padding: 0;
@@ -89,42 +61,53 @@
         }
 
         .login-page {
+            position: relative;
             min-height: 100vh;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
             background-image: url(https://atikle.github.io/resource/backgrounds/2.jpg);
             background-repeat: no-repeat;
             background-size: cover;
-            user-select: none;
+            background-position: center;
+            filter: blur(10px);
+            z-index: 1;
         }
 
         .login-card {
             background-color: var(--card-background-1);
-            padding: 2rem 3rem; /* Using consistent rem padding */
-            border-radius: 0px;
+            padding: 2rem 3rem;
             box-shadow: var(--shadow-1);
             float: inline-end;
-            width: 25%; /* A slightly wider percentage */
+            width: 25%;
             height: 100vh;
-            min-width: 420px; /* Adjusted min-width */
-            max-width: 500px; /* Adjusted max-width */
+            min-width: 420px;
+            max-width: 500px;
             text-align: center;
-            
-            /* The following properties will center the content vertically */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
+            z-index: 2;
         }
 
-        @media screen and (max-width: 600px) {
+        @media screen and (max-width: 768px) {
             .login-page {
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 padding: 1rem;
-                min-height: 100vh;
-                width: 100%;
                 background-color: var(--background-1);
-                background-image: none;
+            }
+            
+            .login-page::before {
+                display: none;
             }
 
             .login-card {
@@ -150,7 +133,7 @@
 
         .logo-link {
             display: inline-block;
-            line-height: 0; /* Prevents extra space below image */
+            line-height: 0;
             margin-bottom: 70px;
         }
 
@@ -161,7 +144,6 @@
         .input-group {
             position: relative;
             margin-bottom: 20px;
-            text-align: left;
         }
         
         .input-icon {
@@ -172,27 +154,27 @@
             width: 20px;
             height: 20px;
             color: var(--text-color-2);
-            transition: color var(--transition-speed-normal) ease;
-            pointer-events: none; /* Allows clicking through the icon */
+            transition: color var(--transition-speed-fast) ease;
+            pointer-events: none;
         }
 
         .login-form input {
             width: 100%;
-            padding: 14px 18px 14px 50px; /* Increased padding */
+            padding: 14px 18px 14px 50px;
             border: 1px solid var(--button-background-2);
             border-radius: 30px;
             color: var(--text-color-1);
-            font-size: 16px; /* Slightly smaller font for better fit */
+            font-size: 16px;
             font-weight: 500;
             background-color: var(--background-2);
-            transition: border-color var(--transition-speed-normal), box-shadow var(--transition-speed-normal);
+            transition: all var(--transition-speed-fast) ease;
         }
 
         .login-form input:focus {
             outline: none;
-            /* box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2); Focus ring removed */
             background-color: var(--background-1);
             border-color: var(--button-background-1);
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
         }
 
         .input-group:focus-within .input-icon {
@@ -206,7 +188,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color var(--transition-speed-normal) ease, transform var(--transition-speed-fast) ease, box-shadow var(--transition-speed-normal) ease, opacity var(--transition-speed-normal) ease;
+            transition: all var(--transition-speed-fast) ease;
             margin-top: 15px;
         }
 
@@ -218,6 +200,7 @@
         
         .login:hover {
             opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         .continue-google {
@@ -226,21 +209,21 @@
             justify-content: center;
             gap: 12px;
             width: 100%;
-            background-color: var(--background-1);
+            background-color: var(--card-background-1);
             color: var(--text-color-2);
             border: 1px solid var(--button-background-2);
             margin-top: 0;
         }
         
         .continue-google:hover {
-            background-color: var(--background-1);
-            transform: translateY(-2px);
+            border-color: var(--text-color-2);
+            transform: translateY(-1px);
             box-shadow: var(--shadow-2);
         }
 
         .form-action-button:active {
             transform: scale(0.98);
-            box-shadow: none; /* Remove shadow on click */
+            box-shadow: none;
         }
 
         #error-message {
@@ -257,10 +240,21 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
     </style>
 </head>
-<body>
-    <div id="login-page" class="login-page" oncontextmenu="return false;">
+<body oncontextmenu="return false;">
+    <div id="login-page" class="login-page">
         <div class="login-card">
             <a href="https://atikle.github.io/home" class="logo-link">
                 <img src="https://atikle.github.io/resource/atikle-logo_multicolor.png" alt="atikle Logo" class="login-logo">
@@ -289,20 +283,30 @@
             </form>
             <div id="error-message">Invalid username or password.</div>
         </div>
-        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; ">atikle Single Sign-On v1.1</p>
+        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; z-index: 3; mix-blend-mode: difference;">atikle Single Sign-On v1.1</p>
     </div>
     <script>
-        // --- Login Form Logic ---
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
         loginForm.addEventListener('submit', (event) => {
-            event.preventDefault(); 
-            // This is a placeholder for actual login logic.
-            // For now, it just shows an error message.
+            event.preventDefault();
+            
             errorMessage.textContent = 'Invalid email or password.';
             errorMessage.classList.add('visible');
+            
+            loginForm.classList.add('shake');
+            setTimeout(() => {
+                loginForm.classList.remove('shake');
+            }, 500);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
         });
     </script>
 </body>
 </html>
+
