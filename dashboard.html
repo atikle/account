@@ -167,7 +167,8 @@
                 console.log('User is not logged in. Redirecting to login page.');
                 // Redirect to the login page
                 // We pass a redirectUrl query param so the login page knows to send the user back here
-                window.location.href = `${loginPageUrl}?redirectUrl=index.html`;
+                window.location.href = `${loginPageUrl}`;
+                // window.location.href = `${loginPageUrl}?redirectUrl=dashboard.html`;
             }
         });
 
