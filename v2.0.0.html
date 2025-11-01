@@ -370,7 +370,7 @@
             </form>
             <div id="error-message">Invalid username or password.</div>
         </div>
-        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; ">atikle Single Sign-On v2.0.0</p>
+        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; ">atikle Single Sign-On v2.0.1</p>
     </div>
     
     <!-- ADD: Firebase SDKs -->
@@ -412,13 +412,30 @@
         const toggleModeBtn = document.getElementById('toggleModeBtn');
         const errorMessage = document.getElementById('error-message');
         
-        const mainAppUrl = 'index.html'; // The page to redirect to on success
+        // --- NEW: Function to get redirect URL ---
+        /**
+         * Gets the redirect URL from the query string, or returns a default.
+         * @returns {string} The URL to redirect to after login.
+         */
+        function getRedirectUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const redirectUrl = params.get('redirectUrl');
+            // Basic validation to prevent open redirect vulnerabilities
+            // This is a simple check; for higher security, validate against a whitelist of domains
+            if (redirectUrl && (redirectUrl.startsWith('/') || redirectUrl.startsWith('http://' + window.location.hostname) || redirectUrl.startsWith('https://' + window.location.hostname) || redirectUrl.startsWith('./') || redirectUrl.startsWith('../'))) {
+                return redirectUrl;
+            }
+            // Default page if no valid redirectUrl is provided
+            return 'index.html'; 
+        }
+
+        const mainAppUrl = getRedirectUrl(); // MOD: Use the dynamic URL
 
         // --- Check if already logged in ---
         // If user is already logged in, redirect them to the app
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log('User already logged in. Redirecting...');
+                console.log('User already logged in. Redirecting to:', mainAppUrl);
                 window.location.href = mainAppUrl;
             }
         });
@@ -480,7 +497,7 @@
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log('Sign in successful:', userCredential.user);
-                window.location.href = mainAppUrl; // Redirect to app
+                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
             } catch (error) {
                 console.error('Sign in error:', error.message);
                 showError(error.message);
@@ -501,7 +518,7 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 console.log('Account creation successful:', userCredential.user);
-                window.location.href = mainAppUrl; // Redirect to app
+                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
             } catch (error) {
                 console.error('Create account error:', error.message);
                 showError(error.message);
@@ -514,7 +531,7 @@
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 console.log('Google sign in successful:', result.user);
-                window.location.href = mainAppUrl; // Redirect to app
+                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
             } catch (error) {
                 console.error('Google sign in error:', error.message);
                 showError(error.message);
