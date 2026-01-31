@@ -1,392 +1,613 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        if (window.self !== window.top) {
+            window.top.location.href = window.location.href;
+        }
+    </script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#242526" media="(prefers-color-scheme: dark)">
+    
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https://atikle.github.io https://www.gstatic.com https://lh3.googleusercontent.com;
+        connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com;
+        object-src 'none';
+        base-uri 'self';
+    ">
+
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff" id="theme-color-meta">
+    <title>atikle | Sign In</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     
-    <title>atikle Single Sign-On</title>
     <link rel="icon" href="https://atikle.github.io/resource/atikle-icon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://atikle.github.io/resource/atikle-icon.png">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const metaTheme = document.getElementById('theme-color-meta');
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                document.documentElement.classList.add('dark');
+                metaTheme.setAttribute('content', '#000000');
+            } else {
+                document.documentElement.classList.remove('dark');
+                metaTheme.setAttribute('content', '#ffffff');
+            }
+        })();
+    </script>
 
     <style>
-        /* CSS variables as requested */
         :root {
-            --transition-speed-fast: 0.2s;
-            --transition-speed-normal: 0.3s;
-            --transition-speed-slow: 0.4s;
-            --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
-            --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            
-            --navbar-background-1: white;
-            --background-1: white;
-            --background-2: #f0f2f5;
-            --background-3: black;
-            --background-4: #f0f2f5;
-            --background-5: #eaebf5;
-            --card-background-1: white;
-            --card-background-2: whitesmoke;
-            --text-color-1: #050505;
-            --text-color-2: #65676b;
-            --text-color-3: white;
-            --shadow-1: 0 2px 6px 0 rgba(136, 148, 171, 0.2), 0 24px 20px -24px rgba(71, 82, 107, 0.1);
-            --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-            --button-background-1: #1877f2;
-            --button-background-2: #e4e6eb;
-            --button-background-3: #3d42df;
-            --button-text-1: #ffffff;
-            --button-text-2: #050505;
-            --button-text-3: #ffffff;
-            --hover-overlay: rgba(0, 0, 0, 0.05);
-
-            /* ADDED: Secondary button color for "Create Account" */
-            --button-background-secondary: #34a853; 
-
-            --sidebar-width: 260px;
-            --sidebar-width-collapsed: 80px;
+            --bg-page: #ffffff;
+            --bg-panel: #ffffff;
+            --bg-input: #f3f4f6;
+            --text-main: #1a1a1a;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --border-input: transparent;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --error: #ef4444;
+            --radius-input: 12px;
+            --radius-btn: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        body.dark-mode {
-            --navbar-background-1: #18191a;
-            --background-1: black;
-            --background-2: #18191a;
-            --background-3: white;
-            --background-4: #242526;
-            --background-5: #18191a;
-            --card-background-1: #242526;
-            --card-background-2: #242526;
-            --text-color-1: white;
-            --text-color-2: #b0b3b8;
-            --text-color-3: black;
-            --shadow-1: 0px 0px 8px 0px #111;
-            --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.25);
-
-            --button-background-1: #2d88ff;
-            --button-background-2: #3a3b3c;
-            --button-background-3: #6f74ff;
-            --button-text-1: #ffffff;
-            --button-text-2: #e4e6eb;
-            --button-text-3: #ffffff;
-            --hover-overlay: rgba(255, 255, 255, 0.08);
-            
-            /* ADDED: Dark mode secondary button */
-            --button-background-secondary: #2ecc71;
+        html.dark {
+            --bg-page: #000000;
+            --bg-panel: #000000;
+            --bg-input: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --border-input: #374151;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
-        /* General Reset & Body styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--background-1);
-            color: var(--text-color-1);
-            transition: background-color var(--transition-speed-normal) ease, color var(--transition-speed-normal) ease;
-            overflow-x: hidden;
-        }
-
-        .login-page {
-            position: relative;
-            min-height: 100vh;
-            user-select: none;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            height: 100svh;
+            width: 100vw;
             overflow: hidden;
+            transition: background-color 0.3s ease;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        .login-page::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("https://atikle.github.io/resource/backgrounds/2.jpg");
-            background-repeat: no-repeat;
-            background-size: cover;
-            filter: blur(8px);
-            z-index: -1;
-            transform: scale(1.05); /* Avoids blurred edges */
-        }
+        button { font-family: inherit; }
 
-        .login-card {
-            background-color: var(--card-background-1);
-            padding: 2rem 3rem; /* Using consistent rem padding */
-            border-radius: 0px;
-            box-shadow: var(--shadow-1);
-            float: inline-end;
-            width: 25%; /* A slightly wider percentage */
-            height: 100vh;
-            min-width: 420px; /* Adjusted min-width */
-            max-width: 500px; /* Adjusted max-width */
-            text-align: center;
-            
-            /* The following properties will center the content vertically */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        @media screen and (max-width: 768px) {
-            .login-page {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 1rem;
-                min-height: 100vh;
-                width: 100%;
-                background-color: var(--background-1);
-                background-image: none;
-            }
-            
-            .login-page::before {
-                display: none; /* Hide blurred background on mobile */
-            }
-
-            .login-card {
-                float: none; 
-                height: auto;
-                width: 100%;
-                min-width: 0;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: none;
-                max-width: 400px;
-            }
-
-            .login-logo {
-                width: 120px;
-                margin-bottom: 60px;
-            }
-        }
-        
-        .login-logo {
-            width: 150px;
-        }
-
-        .logo-link {
-            display: inline-block;
-            line-height: 0; /* Prevents extra space below image */
-            margin-bottom: 70px;
-        }
-
-        .login-form {
+        .layout-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            height: 100%;
             width: 100%;
         }
 
-        .input-group {
+        .hero-section {
+            display: none;
             position: relative;
-            margin-bottom: 20px;
-            text-align: left;
+            background-image: url("https://atikle.github.io/resource/backgrounds/2.jpg");
+            background-size: cover;
+            background-position: center;
         }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 4rem;
+            color: whitesmoke;
+        }
+
+        .hero-text h2 { font-size: 2.6rem; margin-bottom: 1rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+        .hero-text p { font-size: 1rem; opacity: 0.9; max-width: 600px; line-height: 1.6; font-weight: 400; }
+
+        .auth-section {
+            background-color: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem; 
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 380px; 
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .view-wrapper {
+            width: 100%;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .hidden-view { display: none; }
+        .hidden { display: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            text-decoration: none;
+            align-self: flex-start;
+        }
+        .brand-logo { width: auto; height: 48px; }
+        .brand-name { font-size: 1.6rem; font-weight: 700; color: var(--text-main); letter-spacing: -0.02em;}
+
+        .auth-title { font-size: 1.85rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .auth-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; }
+
+        .input-group { position: relative; margin-bottom: 1.25rem; }
         
         .input-icon {
             position: absolute;
-            left: 20px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             width: 20px;
             height: 20px;
-            color: var(--text-color-2);
-            transition: color var(--transition-speed-normal) ease;
-            pointer-events: none; /* Allows clicking through the icon */
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.2s;
+            z-index: 10;
         }
 
-        .login-form input {
-            width: 100%;
-            padding: 14px 18px 14px 50px; /* Increased padding */
-            border: 1px solid var(--button-background-2);
-            border-radius: 30px;
-            color: var(--text-color-1);
-            font-size: 16px; /* Slightly smaller font for better fit */
-            font-weight: 500;
-            background-color: var(--background-2);
-            transition: border-color var(--transition-speed-normal), box-shadow var(--transition-speed-normal);
-        }
-
-        .login-form input:focus {
-            outline: none;
-            /* box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2); Focus ring removed */
-            background-color: var(--background-1);
-            border-color: var(--button-background-1);
-        }
-
-        .input-group:focus-within .input-icon {
-            color: var(--button-background-1);
-        }
-
-        .form-action-button {
-            padding: 14px;
-            border: none;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 600;
+        .toggle-password {
+            pointer-events: auto;
             cursor: pointer;
-            transition: background-color var(--transition-speed-normal) ease, transform var(--transition-speed-fast) ease, box-shadow var(--transition-speed-normal) ease, opacity var(--transition-speed-normal) ease;
-            margin-top: 15px;
-            width: 100%; /* MOD: Make all buttons full-width */
+            left: auto;
+            right: 18px;
+        }
+        .toggle-password:hover { color: var(--text-main); }
+
+        input {
+            width: 100%;
+            padding: 14px 44px 14px 50px; 
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-input);
+            border-radius: var(--radius-input);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            z-index: 1;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
-        .login {
-            background-color: var(--button-background-1);
-            color: var(--button-text-1);
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background-color: var(--bg-panel);
         }
         
-        .login:hover {
-            opacity: 0.9;
+        input:focus + .input-icon, 
+        .input-group:focus-within .input-icon { color: var(--primary); }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            margin-top: -0.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        /* ADDED: Create Account button style */
-        .create-account {
-            background-color: var(--button-background-secondary);
-            color: var(--button-text-1);
+        .back-link {
+            text-align: center;
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
-        .create-account:hover {
-            opacity: 0.9;
-        }
+        .back-link:hover { color: var(--text-main); text-decoration: underline; }
 
-        .continue-google {
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            background-color: var(--background-1);
-            color: var(--text-color-2);
-            border: 1px solid var(--button-background-2);
+            gap: 10px;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .btn-google {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
             margin-top: 0;
         }
-        
-        .continue-google:hover {
-            background-color: var(--background-1);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-2);
-        }
+        .btn-google:hover { background-color: var(--bg-input); border-color: var(--text-muted); }
 
-        .form-action-button:active {
-            transform: scale(0.98);
-            box-shadow: none; /* Remove shadow on click */
-        }
-        
-        /* ADDED: Hide password field by default */
-        .input-group.password {
-            display: none;
-        }
-        
-        /* ADDED: Show password when in create-account mode */
-        .login-form.create-account-mode .input-group.password {
-            display: block;
-        }
-
-        /* ADDED: Change button text based on mode */
-        .login-form .login { display: inline-block; }
-        .login-form .create-account { display: none; }
-        
-        .login-form.create-account-mode .login { display: none; }
-        .login-form.create-account-mode .create-account { display: inline-block; }
-
-        /* ADDED: Style for the "or" separator */
         .separator {
-             margin: 1.5rem 0;
-             color: var(--text-color-2);
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.75rem 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
+        .separator::before, .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .separator span { padding: 0 15px; }
 
-        /* ADDED: Style for the toggle link */
         .toggle-mode {
-            color: var(--button-background-1);
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .toggle-mode button {
             background: none;
             border: none;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
+            color: var(--primary);
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 1.5rem;
+            margin-left: 4px;
         }
-        .toggle-mode:hover {
-            text-decoration: underline;
+        .toggle-mode button:hover { text-decoration: underline; }
+
+        .theme-fab {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--bg-input);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: var(--transition);
+            border: none;
+            z-index: 10;
         }
+        .theme-fab:hover { background-color: var(--border-color); }
 
+        #toast-container { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; }
+        .toast { background: var(--bg-panel); color: var(--text-main); padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 500; opacity: 0; transform: translateY(-20px); transition: all 0.3s; border: 1px solid var(--border-color); }
+        .toast.visible { opacity: 1; transform: translateY(0); }
+        .toast.error svg { color: var(--error); }
+        .toast.success svg { color: var(--success); }
+        .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; display: none; }
+        .btn-loading .spinner { display: block; }
+        .btn-loading span { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        #error-message {
-            color: #ff3b30;
-            margin-top: 16px;
-            font-size: 14px;
-            height: auto; /* MOD: Allow multiple lines */
-            min-height: 20px; /* MOD: Keep min height */
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity var(--transition-speed-normal);
-            line-height: 1.4;
+        .version-tag { position: absolute; bottom: 20px; right: 30px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; }
+
+        /* --- LINK ACCOUNT BANNER --- */
+        .link-banner {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary); /* Left accent */
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            animation: slideDownFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.08); 
+        }
+        .link-banner.hidden { display: none; }
+        
+        .link-banner-icon {
+            color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.1); 
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
         
-        #error-message.visible {
-            visibility: visible;
-            opacity: 1;
+        .link-banner-content { flex: 1; }
+        
+        .link-banner-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+        
+        .link-banner-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        #link-target-email {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        #close-banner-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            margin-top: 0;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        #close-banner-btn:hover { 
+            color: var(--text-main); 
+            background-color: var(--bg-input); 
+        }
+
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (min-width: 769px) {
+            .hero-section { display: flex; }
+            .theme-fab { top: 40px; right: 40px; }
+            .layout-container { grid-template-columns: 1fr 1fr; } 
+            .auth-section { padding: 4rem; }
+        }
+
+        @media (min-width: 1200px) {
+            .layout-container { grid-template-columns: 1fr 480px; }
+        }
+
+        @media (min-width: 1600px) {
+            .layout-container { grid-template-columns: 1fr 560px; }
+            .auth-container { max-width: 420px; }
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
-    <div id="login-page" class="login-page">
-        <div class="login-card">
-            <a href="https://atikle.github.io/home" class="logo-link">
-                <img src="https://atikle.github.io/resource/atikle-logo_multicolor.png" alt="atikle Logo" class="login-logo">
-            </a>
-            
-            <!-- MOD: Removed 'submit' event, will use button clicks -->
-            <form id="login-form" class="login-form">
-                <div class="input-group">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                    </svg>
-                    <!-- MOD: Changed id and type -->
-                    <input type="email" id="email" name="email" placeholder="Email" required>
+<body>
+
+    <div class="layout-container">
+        
+        <div class="hero-section">
+            <div class="hero-overlay">
+                <div class="hero-text">
+                    <h2>Welcome to atikle</h2>
+                    <p>Secure, fast, and reliable access with atikle Single Sign-On</p>
                 </div>
-                <!-- MOD: Added 'password' class -->
-                <div class="input-group password">
-                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                </div>
-                
-                <!-- MOD: Changed to type="button" and added IDs -->
-                <button type="button" id="loginBtn" class="form-action-button login">Sign In</button>
-                <button type="button" id="createAccountBtn" class="form-action-button create-account">Create Account</button>
-
-                <p class="separator">OR</p>
-
-                <button type="button" id="googleLoginBtn" class="form-action-button continue-google">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
-                    <span>Sign In with Google</span>
-                </button>
-
-                <!-- ADDED: Toggle button -->
-                <button type="button" id="toggleModeBtn" class="toggle-mode">Need an account? Sign up</button>
-
-            </form>
-            <div id="error-message">Invalid username or password.</div>
+            </div>
         </div>
-        <p style="position: fixed; bottom: 10px; left: 10px; color: white; font-size: 10px; ">atikle Single Sign-On v2.0.0</p>
+
+        <div class="auth-section">
+            
+            <button id="themeToggle" class="theme-fab" aria-label="Toggle Theme">
+                <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+            </button>
+
+            <div class="auth-container">
+                
+                <a href="https://atikle.github.io/home" class="brand-header">
+                    <img src="https://atikle.github.io/resource/atikle-logo_multicolor.png" alt="Logo" class="brand-logo">
+                    <!-- <span class="brand-name">atikle</span> -->
+                </a>
+
+                <div id="link-account-banner" class="link-banner hidden">
+                    <div class="link-banner-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                    </div>
+                    <div class="link-banner-content">
+                        <div class="link-banner-title">Account Linking Required</div>
+                        <div class="link-banner-text">
+                            To connect your profiles, please sign in with the Google account for <span id="link-target-email">...</span>
+                        </div>
+                    </div>
+                    <button id="close-banner-btn" type="button" aria-label="Dismiss">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="auth-main-view" class="view-wrapper">
+                    <h1 class="auth-title" id="page-title">Sign In</h1>
+                    <p class="auth-subtitle" id="page-subtitle">Welcome back!</p>
+
+                    <form id="login-form">
+                        <div class="input-group">
+                            <input type="email" id="email" placeholder="Email Address" required autocomplete="email">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                            <svg id="toggle-password" class="input-icon toggle-password" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+
+                        <div id="confirm-password-container" class="input-group hidden">
+                            <input type="password" id="confirm-password" placeholder="Confirm Password" autocomplete="new-password">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                            <svg id="toggle-confirm-password" class="input-icon toggle-password" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+
+                        <a id="forgot-password-link" class="forgot-link">Forgot Password?</a>
+
+                        <button type="submit" id="submitBtn" class="btn btn-primary">
+                            <div class="spinner"></div>
+                            <span id="btn-text">Sign In</span>
+                        </button>
+                    </form>
+
+                    <div class="separator"><span>OR</span></div>
+
+                    <button type="button" id="googleLoginBtn" class="btn btn-google">
+                        <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+                            <g transform="matrix(1, 0, 0, 1, 0, 0)">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                            </g>
+                        </svg>
+                        <span>Continue with Google</span>
+                    </button>
+
+                    <div class="toggle-mode">
+                        <span id="toggle-text">Don't have an account?</span>
+                        <button id="toggleModeBtn">Sign Up</button>
+                    </div>
+                </div>
+
+                <div id="auth-forgot-view" class="view-wrapper hidden-view">
+                    <h1 class="auth-title">Reset Password</h1>
+                    <p class="auth-subtitle">Enter your email and we'll send a reset link to get back into your account.</p>
+
+                    <form id="reset-form">
+                        <div class="input-group">
+                            <input type="email" id="reset-email" placeholder="Email Address" required>
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+
+                        <button type="submit" id="sendResetBtn" class="btn btn-primary">
+                            <div class="spinner"></div>
+                            <span id="reset-btn-text">Send Reset Link</span>
+                        </button>
+                    </form>
+
+                    <button id="backToLoginBtn" class="back-link">Back to Sign In</button>
+                </div>
+
+                <div id="auth-password-setup-view" class="view-wrapper hidden-view">
+                    <h1 class="auth-title">Secure Account</h1>
+                    <p class="auth-subtitle">Set a password to access your account via email/password in the future.</p>
+                    
+                    <div class="input-group">
+                        <input type="password" id="new-password" placeholder="Create Password" required>
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                        <svg id="toggle-new-pass" class="input-icon toggle-password" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="confirm-new-password" placeholder="Confirm Password" required>
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                        <svg id="toggle-confirm-new-pass" class="input-icon toggle-password" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+
+                    <button id="savePasswordBtn" class="btn btn-primary" style="margin-bottom: 0.5rem;">Save Password</button>
+                    <button id="skipPasswordBtn" class="back-link">Skip for Now</button>
+                </div>
+            </div>
+            
+        </div>
     </div>
-    
-    <!-- ADD: Firebase SDKs -->
+
+    <div id="toast-container"></div>
+
     <script type="module">
-        // Import the functions you need from the SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
-            signInWithEmailAndPassword,
-            createUserWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            onAuthStateChanged
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            signInWithPopup, 
+            GoogleAuthProvider, 
+            onAuthStateChanged,
+            updatePassword,
+            sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
-        // Your web app's Firebase configuration (FROM YOUR PREVIOUS MESSAGE)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         const firebaseConfig = {
             apiKey: "AIzaSyCiAI1AScqKoH7O6fJh4dCiwCUC2BUxd0U",
             authDomain: "my-pocket-e547b.firebaseapp.com",
@@ -397,153 +618,347 @@
             measurementId: "G-X8JGLLE2PP"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // DOM Elements
-        const loginForm = document.getElementById('login-form');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const createAccountBtn = document.getElementById('createAccountBtn');
-        const googleLoginBtn = document.getElementById('googleLoginBtn');
-        const toggleModeBtn = document.getElementById('toggleModeBtn');
-        const errorMessage = document.getElementById('error-message');
-        
-        // --- NEW: Function to get redirect URL ---
-        /**
-         * Gets the redirect URL from the query string, or returns a default.
-         * @returns {string} The URL to redirect to after login.
-         */
+        const dom = {
+            mainView: document.getElementById('auth-main-view'),
+            forgotView: document.getElementById('auth-forgot-view'),
+            passwordSetupView: document.getElementById('auth-password-setup-view'),
+            
+            loginForm: document.getElementById('login-form'),
+            resetForm: document.getElementById('reset-form'),
+            
+            emailInput: document.getElementById('email'),
+            passwordInput: document.getElementById('password'),
+            confirmPasswordInput: document.getElementById('confirm-password'),
+            confirmPasswordContainer: document.getElementById('confirm-password-container'),
+            resetEmailInput: document.getElementById('reset-email'),
+            
+            submitBtn: document.getElementById('submitBtn'),
+            btnText: document.getElementById('btn-text'),
+            googleBtn: document.getElementById('googleLoginBtn'),
+            toggleModeBtn: document.getElementById('toggleModeBtn'),
+            sendResetBtn: document.getElementById('sendResetBtn'),
+            backToLoginBtn: document.getElementById('backToLoginBtn'),
+            
+            toggleText: document.getElementById('toggle-text'),
+            pageTitle: document.getElementById('page-title'),
+            pageSubtitle: document.getElementById('page-subtitle'),
+            
+            togglePassword: document.getElementById('toggle-password'),
+            toggleConfirmPassword: document.getElementById('toggle-confirm-password'),
+            
+            newPasswordInput: document.getElementById('new-password'),
+            confirmNewPasswordInput: document.getElementById('confirm-new-password'),
+            toggleNewPass: document.getElementById('toggle-new-pass'),
+            toggleConfirmNewPass: document.getElementById('toggle-confirm-new-pass'),
+            savePasswordBtn: document.getElementById('savePasswordBtn'),
+            skipPasswordBtn: document.getElementById('skipPasswordBtn'),
+            
+            forgotLink: document.getElementById('forgot-password-link'),
+            themeToggle: document.getElementById('themeToggle'),
+            iconSun: document.getElementById('icon-sun'),
+            iconMoon: document.getElementById('icon-moon'),
+
+            // BANNER & ELEMENTS TO HIDE
+            linkBanner: document.getElementById('link-account-banner'),
+            linkTargetEmail: document.getElementById('link-target-email'),
+            closeBannerBtn: document.getElementById('close-banner-btn'),
+            
+            // Elements to hide during linking
+            separator: document.querySelector('.separator'),
+            toggleMode: document.querySelector('.toggle-mode')
+        };
+
+        let isRegisterMode = false;
+
+        // SECURITY UPDATE: Strict Redirect Validation
         function getRedirectUrl() {
             const params = new URLSearchParams(window.location.search);
             const redirectUrl = params.get('redirectUrl');
-            // Basic validation to prevent open redirect vulnerabilities
-            // This is a simple check; for higher security, validate against a whitelist of domains
-            if (redirectUrl && (redirectUrl.startsWith('/') || redirectUrl.startsWith('http://' + window.location.hostname) || redirectUrl.startsWith('https://' + window.location.hostname) || redirectUrl.startsWith('./') || redirectUrl.startsWith('../'))) {
+            
+            // SECURITY: Only allow redirects to your specific domain
+            const allowedBase = 'https://atikle.github.io/';
+
+            if (redirectUrl && redirectUrl.startsWith(allowedBase)) {
                 return redirectUrl;
             }
-            // Default page if no valid redirectUrl is provided
-            return 'https://atikle.github.io/account/dashboard'; 
+            
+            // SECURITY: Safe fallback
+            return 'https://atikle.github.io/workspace/page?view=dashboard';
+        }
+        const mainAppUrl = getRedirectUrl();
+
+        // --- CHECK LINKING FLOW ---
+        function checkLinkingFlow() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const flow = urlParams.get('flow');
+            const linkEmail = urlParams.get('link_email');
+
+            if (flow === 'link' && linkEmail) {
+                // Show Banner
+                dom.linkBanner.classList.remove('hidden');
+                dom.linkTargetEmail.textContent = linkEmail;
+                
+                // HIDE standard Auth Elements
+                dom.loginForm.style.display = 'none';
+                if(dom.separator) dom.separator.style.display = 'none';
+                if(dom.toggleMode) dom.toggleMode.style.display = 'none';
+
+                // Optional: Pre-fill email just in case needed internally
+                if(dom.emailInput) dom.emailInput.value = linkEmail;
+                
+                // Update Text
+                dom.pageTitle.textContent = "Link Google Account";
+                dom.pageSubtitle.textContent = "Sign in to connect your profiles.";
+            }
+        }
+        checkLinkingFlow();
+
+        // Close Banner Logic
+        dom.closeBannerBtn.addEventListener('click', () => {
+            dom.linkBanner.classList.add('hidden');
+            
+            // Restore Elements
+            dom.loginForm.style.display = 'block';
+            if(dom.separator) dom.separator.style.display = 'flex';
+            if(dom.toggleMode) dom.toggleMode.style.display = 'block';
+            
+            // Restore Text
+            dom.pageTitle.textContent = "Sign In"; 
+            dom.pageSubtitle.textContent = "Welcome back! Please enter your details.";
+        });
+        // -------------------------
+
+        // SECURITY UPDATE: XSS-Safe Toast
+        function showToast(message, type = 'error') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            // Safe static HTML for icons
+            const iconHtml = type === 'error' ? 
+                `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>` : 
+                `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+            
+            toast.innerHTML = iconHtml;
+            
+            // SECURITY: Use textContent for dynamic user/server strings
+            const textSpan = document.createElement('span');
+            textSpan.textContent = message;
+            toast.appendChild(textSpan);
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('visible'));
+            setTimeout(() => { toast.classList.remove('visible'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        const mainAppUrl = getRedirectUrl(); // MOD: Use the dynamic URL
-
-        // --- Check if already logged in ---
-        // If user is already logged in, redirect them to the app
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log('User already logged in. Redirecting to:', mainAppUrl);
-                window.location.href = mainAppUrl;
-            }
-        });
-
-        // --- UI Mode Toggle ---
-        let isCreateAccountMode = false;
-        toggleModeBtn.addEventListener('click', () => {
-            isCreateAccountMode = !isCreateAccountMode;
-            loginForm.classList.toggle('create-account-mode', isCreateAccountMode);
-            
-            if (isCreateAccountMode) {
-                toggleModeBtn.textContent = 'Already have an account? Sign in';
-                passwordInput.required = true;
+        function setLoading(btn, isLoading, defaultText) {
+            if (isLoading) {
+                btn.classList.add('btn-loading');
+                btn.disabled = true;
             } else {
-                toggleModeBtn.textContent = 'Need an account? Sign up';
-                // FIX: Set required to true for password on Sign In as well.
-                passwordInput.required = true; 
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+                const span = btn.querySelector('span');
+                if (span) span.textContent = defaultText;
+                else btn.textContent = defaultText;
             }
-            hideError(); // Hide any previous errors
-        });
-
-        // --- Show/Hide Error Message ---
-        function showError(message) {
-            // Firebase gives wordy errors, let's simplify them
-            let friendlyMessage = message;
-            if (message.includes('auth/invalid-email')) {
-                friendlyMessage = 'Please enter a valid email address.';
-            } else if (message.includes('auth/user-not-found') || message.includes('auth/wrong-password') || message.includes('auth/invalid-credential')) {
-                friendlyMessage = 'Invalid email or password. Please try again.';
-            } else if (message.includes('auth/email-already-in-use')) {
-                friendlyMessage = 'This email is already in use. Please sign in or use a different email.';
-            } else if (message.includes('auth/weak-password')) {
-                friendlyMessage = 'Password is too weak. It must be at least 6 characters long.';
-            } else if (message.includes('auth/popup-closed-by-user')) {
-                friendlyMessage = 'Sign-in window closed. Please try again.';
-            } else if (message.includes('auth/network-request-failed')) {
-                friendlyMessage = 'Network error. Please check your connection.';
-            }
-
-            errorMessage.textContent = friendlyMessage;
-            errorMessage.classList.add('visible');
         }
 
-        function hideError() {
-            errorMessage.classList.remove('visible');
+        function switchView(viewName) {
+            dom.mainView.classList.add('hidden-view');
+            dom.forgotView.classList.add('hidden-view');
+            dom.passwordSetupView.classList.add('hidden-view');
+
+            if (viewName === 'forgot') {
+                dom.forgotView.classList.remove('hidden-view');
+                if(dom.emailInput.value) dom.resetEmailInput.value = dom.emailInput.value;
+            } else if (viewName === 'password-setup') {
+                dom.passwordSetupView.classList.remove('hidden-view');
+            } else {
+                dom.mainView.classList.remove('hidden-view');
+            }
         }
-        
-        // --- Email/Password Sign In ---
-        loginBtn.addEventListener('click', async () => {
-            hideError();
-            const email = emailInput.value;
-            const password = passwordInput.value;
+
+        dom.forgotLink.addEventListener('click', (e) => { e.preventDefault(); switchView('forgot'); });
+        dom.backToLoginBtn.addEventListener('click', (e) => { e.preventDefault(); switchView('login'); });
+
+        onAuthStateChanged(auth, (user) => {
+            if (sessionStorage.getItem('pendingGoogleAuth')) return;
+            if (user) window.location.href = mainAppUrl;
+        });
+
+        function setupToggle(icon, input) {
+            icon.addEventListener('click', () => {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.style.color = type === 'text' ? 'var(--primary)' : 'var(--text-muted)';
+            });
+        }
+        setupToggle(dom.togglePassword, dom.passwordInput);
+        setupToggle(dom.toggleConfirmPassword, dom.confirmPasswordInput);
+        setupToggle(dom.toggleNewPass, dom.newPasswordInput);
+        setupToggle(dom.toggleConfirmNewPass, dom.confirmNewPasswordInput);
+
+        // SECURITY UPDATE: Rate Limiting Helper
+        function triggerRateLimit(btn, originalText) {
+             const originalColor = btn.style.backgroundColor;
+             btn.disabled = true;
+             btn.style.opacity = '0.5';
+             btn.style.cursor = 'not-allowed';
+             
+             // Wait 3 seconds before allowing another attempt
+             setTimeout(() => {
+                 btn.disabled = false;
+                 btn.style.opacity = '1';
+                 btn.style.cursor = 'pointer';
+                 if (btn.querySelector('.spinner')) {
+                     setLoading(btn, false, originalText);
+                 }
+             }, 3000);
+        }
+
+        dom.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = dom.emailInput.value;
+            const password = dom.passwordInput.value;
             
-            if (!email || !password) {
-                showError('Please enter both email and password.');
-                return;
+            if (!email || !password) return showToast('Please fill in all fields');
+
+            if (isRegisterMode) {
+                const confirmPassword = dom.confirmPasswordInput.value;
+                if (password !== confirmPassword) return showToast('Passwords do not match');
             }
 
+            setLoading(dom.submitBtn, true);
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Sign in successful:', userCredential.user);
-                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
+                if (isRegisterMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showToast('Account created successfully!', 'success');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
             } catch (error) {
-                console.error('Sign in error:', error.message);
-                showError(error.message);
+                // SECURITY: Apply rate limiting on error to prevent spam
+                triggerRateLimit(dom.submitBtn, isRegisterMode ? 'Sign Up' : 'Sign In');
+                handleAuthError(error);
             }
         });
 
-        // --- Email/Password Create Account ---
-        createAccountBtn.addEventListener('click', async () => {
-            hideError();
-            const email = emailInput.value;
-            const password = passwordInput.value;
-
-            if (!email || !password) {
-                showError('Please enter both email and password to sign up.');
-                return;
-            }
-            
+        dom.resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = dom.resetEmailInput.value;
+            if (!email) return showToast('Please enter your email address');
+            setLoading(dom.sendResetBtn, true);
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                console.log('Account creation successful:', userCredential.user);
-                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
+                await sendPasswordResetEmail(auth, email);
+                showToast('Reset link sent to your email!', 'success');
+                setTimeout(() => switchView('login'), 2000);
             } catch (error) {
-                console.error('Create account error:', error.message);
-                showError(error.message);
+                // SECURITY: Rate limit reset requests too
+                triggerRateLimit(dom.sendResetBtn, 'Send Reset Link');
+                handleAuthError(error);
+            } finally {
+                // Normally handled in rate limit, but if successful we want to clear loading
+                if (!dom.sendResetBtn.disabled) setLoading(dom.sendResetBtn, false, 'Send Reset Link');
             }
         });
 
-        // --- Google Sign In ---
-        googleLoginBtn.addEventListener('click', async () => {
-            hideError();
+        dom.googleBtn.addEventListener('click', async () => {
+            sessionStorage.setItem('pendingGoogleAuth', 'true');
             try {
                 const result = await signInWithPopup(auth, googleProvider);
-                console.log('Google sign in successful:', result.user);
-                window.location.href = mainAppUrl; // MOD: Redirect to dynamic URL
+                if (!result.user.providerData.some(p => p.providerId === 'password')) {
+                    switchView('password-setup');
+                } else {
+                    sessionStorage.removeItem('pendingGoogleAuth');
+                    window.location.href = mainAppUrl;
+                }
             } catch (error) {
-                console.error('Google sign in error:', error.message);
-                showError(error.message);
+                sessionStorage.removeItem('pendingGoogleAuth');
+                handleAuthError(error);
             }
         });
 
-        // --- Disable Dev Tools (from original file) ---
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
+        dom.toggleModeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isRegisterMode = !isRegisterMode;
+            dom.emailInput.value = ''; 
+            dom.passwordInput.value = '';
+            dom.confirmPasswordInput.value = '';
+
+            if (isRegisterMode) {
+                dom.pageTitle.textContent = "Create Account";
+                dom.pageSubtitle.textContent = "Get started with your new account.";
+                dom.btnText.textContent = "Sign Up";
+                dom.toggleText.textContent = "Already have an account?";
+                dom.toggleModeBtn.textContent = "Sign In";
+                dom.forgotLink.style.display = 'none';
+                dom.confirmPasswordContainer.classList.remove('hidden');
+            } else {
+                dom.pageTitle.textContent = "Sign In";
+                dom.pageSubtitle.textContent = "Welcome back! Please enter your details.";
+                dom.btnText.textContent = "Sign In";
+                dom.toggleText.textContent = "Don't have an account?";
+                dom.toggleModeBtn.textContent = "Sign Up";
+                dom.forgotLink.style.display = 'block';
+                dom.confirmPasswordContainer.classList.add('hidden');
             }
         });
+
+        dom.savePasswordBtn.addEventListener('click', async () => {
+            const newPass = dom.newPasswordInput.value;
+            const confirmPass = dom.confirmNewPasswordInput.value;
+            
+            if (newPass.length < 6) return showToast('Password must be at least 6 characters');
+            if (newPass !== confirmPass) return showToast('Passwords do not match');
+
+            const originalText = dom.savePasswordBtn.textContent;
+            dom.savePasswordBtn.textContent = 'Saving...';
+            dom.savePasswordBtn.disabled = true;
+
+            try {
+                await updatePassword(auth.currentUser, newPass);
+                sessionStorage.removeItem('pendingGoogleAuth');
+                window.location.href = mainAppUrl;
+            } catch (error) {
+                dom.savePasswordBtn.textContent = originalText;
+                dom.savePasswordBtn.disabled = false;
+                showToast(error.message);
+            }
+        });
+        
+        dom.skipPasswordBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('pendingGoogleAuth');
+            window.location.href = mainAppUrl;
+        });
+
+        dom.themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+        });
+
+        function updateThemeIcon(isDark) {
+            dom.iconSun.style.display = isDark ? 'block' : 'none';
+            dom.iconMoon.style.display = isDark ? 'none' : 'block';
+            document.getElementById('theme-color-meta').setAttribute('content', isDark ? '#000000' : '#ffffff');
+        }
+        updateThemeIcon(document.documentElement.classList.contains('dark'));
+
+        function handleAuthError(error) {
+            let msg = error.message;
+            if (msg.includes('invalid-email')) msg = 'Invalid email address.';
+            else if (msg.includes('user-not-found') || msg.includes('wrong-password') || msg.includes('invalid-credential')) msg = 'Incorrect email or password.';
+            else if (msg.includes('email-already-in-use')) msg = 'Email already in use.';
+            else if (msg.includes('weak-password')) msg = 'Password is too weak.';
+            else if (msg.includes('too-many-requests')) msg = 'Too many attempts. Try again later.';
+            showToast(msg);
+        }
     </script>
 </body>
 </html>
