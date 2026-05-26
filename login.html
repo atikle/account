@@ -843,20 +843,20 @@
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDkKhb8m0znWyC2amv6uGpA8KmbkuW-j1U",
-            authDomain: "timetrekker-app.firebaseapp.com",
-            projectId: "timetrekker-app",
-            storageBucket: "timetrekker-app.firebasestorage.app",
-            messagingSenderId: "83185163190",
-            appId: "1:83185163190:web:e2974c5d0f0274fe5e3f17",
-            measurementId: "G-FLZ02E1Y5L"
+            apiKey: "AIzaSyCFBRUc8afjIrOtet57sltb8M1xrVR5R3c",
+            authDomain: "atikle-web.firebaseapp.com",
+            projectId: "atikle-web",
+            storageBucket: "atikle-web.firebasestorage.app",
+            messagingSenderId: "63074656402",
+            appId: "1:63074656402:web:0af9a3d0bba7cd7dc0464b",
+            measurementId: "G-38WD0DDG8E"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
-        const APP_ID = 'timetrekker-v1';
+        const APP_ID = 'atikle';
 
         const dom = {
             mainView: document.getElementById('auth-main-view'),
